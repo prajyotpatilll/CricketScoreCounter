@@ -50,7 +50,7 @@ const updateTargetStatus = () => {
   if (targetRuns <= 0) {
     targetParagraph.textContent = "You win";
   } else if (targetBalls <= 0) {
-    targetParagraph.textContent = "You lose";
+    targetParagraph.textContent = `You lose by ${targetRuns} Runs`;
   } else {
     targetParagraph.textContent = `Runs: ${targetRuns}, Balls: ${targetBalls}`;
   }
@@ -125,6 +125,8 @@ targetModeButton.addEventListener("click", () => {
 
   targetParagraph = document.createElement("p");
   targetParagraph.textContent = `Runs: ${targetRuns}, Balls: ${targetBalls}`;
+  targetParagraph.style.paddingTop = "10px"
+  targetParagraph.style.paddingBottom = "10px"
   document.querySelector(".Score-div").appendChild(targetParagraph);
 
   isTargetMode = true;
