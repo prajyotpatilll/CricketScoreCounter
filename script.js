@@ -1,123 +1,131 @@
 // Add all Query selectors
-
 const mainScore = document.querySelector(".score-over");
 const mainOver = document.querySelector(".overs-h");
 const ballsLogo = document.querySelectorAll(".ball");
-const actionBut = document.querySelectorAll(".action-but-1 .act-btn");
-const wiketScore = document.querySelector(".action-but-1 .act-btn1")
-const BoardBut = document.querySelector(".act-btn2");
-const undoBut = document.querySelector(".act-btn3");
-const targetMode = document.querySelector(".target");
-const overboard = document.querySelectorAll(".action-but-1 .overupdate")
-const ballupdate = document.querySelectorAll(".action-but-1 .ballupd")
+const actionButtons = document.querySelectorAll(".action-but-1 .act-btn");
+const wicketButton = document.querySelector(".action-but-1 .act-btn1");
+const targetModeButton = document.querySelector(".target");
+const overButtons = document.querySelectorAll(".action-but-1 .overupdate");
+const ballUpdateButtons = document.querySelectorAll(".action-but-1 .ballupd");
 
-//main score update
+// Main score variables
 let score = 0;
-let wicket = 0;
+let wickets = 0;
 
-//over update
-let over = 0;
-let overcounter = 0;
+// Over update variables
+let overBalls = 0;
+let totalBalls = 0;
 
-//wiket update
-let value1 = 0;
+// Wicket update variable
+let wicketCount = 0;
 
-//balls update
-let indexBall = 0;
+// Ball update variable
+let ballIndex = 0;
 
-
+// Target mode variables
+let targetRuns;
+let targetBalls;
+let targetParagraph;
+let isTargetMode = false;
 
 // Function to update the score
-
-const finalScoreUpdate = (value) => {
+const updateScore = (value) => {
   score += value;
-  mainScore.innerText = `${score}/${wicket}`;
-}
+  mainScore.innerText = `${score}/${wickets}`;
+
+  if (isTargetMode) {
+    targetRuns -= value;
+    updateTargetStatus();
+  }
+};
 
 // Function to update the wicket count
+const updateWickets = () => {
+  wickets++;
+  mainScore.innerText = `${score}/${wickets}`;
+};
 
-const finalWicketUpdate = (value) => {
-  wicket = value;
-  mainScore.innerText = `${score}/${wicket}`;
-}
+// Function to update the target status
+const updateTargetStatus = () => {
+  if (targetRuns <= 0) {
+    targetParagraph.textContent = "You win";
+  } else if (targetBalls <= 0) {
+    targetParagraph.textContent = "You lose";
+  } else {
+    targetParagraph.textContent = `Runs: ${targetRuns}, Balls: ${targetBalls}`;
+  }
+};
 
+// Function to handle over update
+const updateOver = () => {
+  overBalls++;
+  totalBalls++;
 
-// Adding event listeners to the action buttons
+  if (overBalls >= 6) {
+    overBalls = 0;
+  }
 
-actionBut.forEach(button => {
+  const overCount = Math.floor(totalBalls / 6);
+  mainOver.innerText = `overs ${overCount}.${overBalls}`;
+
+  if (isTargetMode) {
+    targetBalls--;
+    updateTargetStatus();
+  }
+};
+
+// Function to handle ball updates
+const updateBalls = (value) => {
+  const ballsArray = Array.from(ballsLogo);
+
+  if (ballIndex >= 6) {
+    ballIndex = 0;
+    ballsArray.forEach(ball => {
+      ball.innerText = ' ';
+      ball.style.backgroundColor = "white";
+      ball.style.color = "black";
+    });
+  }
+
+  ballsArray[ballIndex].innerText = value;
+  ballsArray[ballIndex].style.backgroundColor = "#2c3343";
+  ballsArray[ballIndex].style.color = "white";
+
+  ballIndex++;
+};
+
+// Adding event listeners to action buttons
+actionButtons.forEach(button => {
   button.addEventListener('click', (event) => {
-    let value = parseInt(event.target.value);
-    finalScoreUpdate(value);
+    const value = parseInt(event.target.value);
+    updateScore(value);
   });
 });
 
 // Adding wicket score button
+wicketButton.addEventListener("click", updateWickets);
 
-wiketScore.addEventListener("click", () => {
-  value1++;
-
-  finalWicketUpdate(value1);
-
+// Adding over update buttons
+overButtons.forEach(button => {
+  button.addEventListener('click', updateOver);
 });
 
-//over update
-
-overboard.forEach(button => {
-  button.addEventListener('click', () => {
-    over++;
-    overcounter++;
-
-    if (over >= 6) {
-      over = 0;
-    }
-
-    let overCou = Math.floor(overcounter / 6);
-
-    mainOver.innerText = `overs ${overCou}.${over}`;
+// Adding ball update buttons
+ballUpdateButtons.forEach(button => {
+  button.addEventListener("click", (event) => {
+    const value = event.target.value;
+    updateBalls(value);
   });
 });
 
-//overballs logic here
+// Target mode logic
+targetModeButton.addEventListener("click", () => {
+  targetRuns = parseInt(prompt("Enter target runs:"));
+  targetBalls = parseInt(prompt("Enter target overs:")) * 6;
 
-ballupdate.forEach(button => {
-  button.addEventListener("click", () => {
+  targetParagraph = document.createElement("p");
+  targetParagraph.textContent = `Runs: ${targetRuns}, Balls: ${targetBalls}`;
+  document.querySelector(".Score-div").appendChild(targetParagraph);
 
-    let value2 = button.value;
-    const ballsArray = Array.from(ballsLogo);
-
-    if (indexBall >= 6) {
-      indexBall = 0;
-
-      for (let i = 0; i <= 5; i++) {
-        ballsArray[i].innerText = ' ';
-        ballsArray[i].style.backgroundColor = "white";
-        ballsArray[i].style.color = "black";
-      }
-
-    };
-
-    ballsArray[indexBall].innerText = value2;
-    ballsArray[indexBall].style.backgroundColor = "#2c3343";
-    ballsArray[indexBall].style.color = "white";
-
-    indexBall++;
-  })
+  isTargetMode = true;
 });
-
-
-//undo button logic
-// undoBut.addEventListener("click", ()=>{
-//   score--;
-//   over--;
-//   overcounter--;
-//   value1--;
-//   indexBall--;
-// })
-
-
-
-
-
-
-
-
